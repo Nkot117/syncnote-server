@@ -1,11 +1,11 @@
 {
   "name": "syncnote-server",
   "version": "1.0.0",
-  "main": "dist/app.js",
+  "main": "dist/server.js",
   "type": "module",
   "scripts": {
     "build": "tsc --watch",
-    "dev": "nodemon dist/app.js"
+    "dev": "nodemon dist/server.js"
   },
   "keywords": [],
   "author": "",
