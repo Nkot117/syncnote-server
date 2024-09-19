@@ -3,6 +3,8 @@ import path from "path";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import ejs from "ejs";
+import dotenv from "dotenv";
+dotenv.config();
 
 const sendRegistrationMail = async (
   name: string,
@@ -21,7 +23,11 @@ const sendRegistrationMail = async (
       `${templateName}.ejs`
     );
 
-    const html = await ejs.renderFile(templatePath, { user: { name } });
+    const verificationLink = `${process.env.CLIENT_URL}/api/user/verify-email?token=${token}`;
+
+    const html = await ejs.renderFile(templatePath, {
+      user: { name, verificationLink },
+    });
 
     const options = {
       from: process.env.DEV_MAIL_USER,
