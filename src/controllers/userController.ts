@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import CryptoJS from "crypto-js";
 
 import User from "../models/userModel.js";
+import { sendRegistrationMail } from "../services/mailService.js";
 
 /**
  * ユーザー登録処理
@@ -21,6 +22,8 @@ async function registerUser(req: Request, res: Response) {
       password: encryptedPassword,
       emailVerified: false,
     });
+
+    sendRegistrationMail(email, "token");
 
     return res.status(200).json({ user });
   } catch (error) {
