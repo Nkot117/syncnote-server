@@ -25,7 +25,7 @@ const userSchema = new Schema<IUser>({
     type: Boolean,
     default: false,
   },
-});
+}, { timestamps: true });
 
 const User = model<IUser>("User", userSchema);
 
