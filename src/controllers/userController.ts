@@ -23,7 +23,7 @@ async function registerUser(req: Request, res: Response) {
       emailVerified: false,
     });
 
-    sendRegistrationMail(email, "token");
+    sendRegistrationMail(name, email, "token", "welcomeEmail");
 
     return res.status(200).json({ user });
   } catch (error) {
