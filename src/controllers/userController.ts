@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import CryptoJS from "crypto-js";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
