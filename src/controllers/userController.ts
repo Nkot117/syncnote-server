@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import CryptoJS from "crypto-js";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 import User from "../models/userModel.js";
 import { sendRegistrationMail } from "../services/mailService.js";
@@ -14,9 +15,9 @@ async function registerUser(req: Request, res: Response) {
   const { name, email, password } = req.body;
 
   try {
-    const encryptedPassword = CryptoJS.AES.encrypt(
+    const encryptedPassword = await bcrypt.hash(
       password,
-      process.env.SECRET_KEY || ""
+      process.env.SALT_ROUNDS || 10
     );
 
     const user = await User.create({
@@ -61,9 +62,12 @@ async function verifyEmail(req: Request, res: Response) {
     }
 
     const { userId, email } = decodedToken as JwtPayload;
-    const user = await User.updateOne({ _id: userId, email }, { emailVerified: true });
+    const user = await User.updateOne(
+      { _id: userId, email },
+      { emailVerified: true }
+    );
     console.log(user);
-    if(user.modifiedCount === 0) {
+    if (user.modifiedCount === 0) {
       return res.status(400).json({ message: "ユーザーが見つかりません" });
     }
 
@@ -99,12 +103,9 @@ async function loginUser(req: Request, res: Response) {
         .json({ message: "メールアドレスが認証されていません" });
     }
 
-    const descriptedPassword = CryptoJS.AES.decrypt(
-      user.password,
-      process.env.SECRET_KEY || ""
-    ).toString(CryptoJS.enc.Utf8);
+    const descriptedPassword = await bcrypt.compare(password, user.password);
 
-    if (descriptedPassword === password) {
+    if (descriptedPassword) {
       const { password: _, ...userWithoutPassword } = user.toObject();
       const token = jwt.sign(
         { id: user._id },
