@@ -1,8 +1,8 @@
 import { Schema, model } from "mongoose";
 
 interface IMemo {
-  title: String;
-  content: String;
+  title: string;
+  content: string;
 }
 
 const memoSchema = new Schema(
