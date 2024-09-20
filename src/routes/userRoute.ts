@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { registerUser, verifyEmail } from "../controllers/userController.js";
+import { loginUser, registerUser, verifyEmail } from "../controllers/userController.js";
 
 const router = Router();
 
@@ -13,5 +13,10 @@ router.post("/register", registerUser);
  * メールアドレス認証API
  */
 router.get("/verify-email", verifyEmail);
+
+/**
+ * ログインAPI
+ */
+router.post("/login", loginUser);
 
 export default router;
