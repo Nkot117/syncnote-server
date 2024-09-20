@@ -4,6 +4,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 import User from "../models/userModel.js";
 import { sendRegistrationMail } from "../services/mailService.js";
+import { tokenDecode } from "../services/authService.js";
 
 /**
  * ユーザー登録処理
@@ -45,16 +46,28 @@ async function registerUser(req: Request, res: Response) {
  */
 async function verifyEmail(req: Request, res: Response) {
   console.log("verifyEmail called");
+  
   const token = req.query.token as string;
-  const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET_KEY || "");
-  if (!decodedToken) {
+
+  if (!token) {
     return res.status(400).json({ message: "無効なトークンです" });
   }
+
   try {
+    const decodedToken = tokenDecode(token);
+    if (!decodedToken) {
+      return res.status(400).json({ message: "無効なトークンです" });
+    }
+
     const { userId, email } = decodedToken as JwtPayload;
     await User.updateOne({ _id: userId, email }, { emailVerified: true });
+
+    return res
+      .status(200)
+      .json({ message: "メールアドレス認証が完了しました" });
   } catch (error) {
     console.error(error);
+    
     return res
       .status(500)
       .json({ message: "メールアドレス認証に失敗しました" });
