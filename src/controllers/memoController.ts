@@ -24,6 +24,7 @@ async function createMemo(req: Request, res: Response) {
  * メモ一覧取得
  */
 async function getMemoList(req: Request, res: Response) {
+  console.log("getMemoList called");
   const userId = req.user._id;
 
   try {
@@ -39,6 +40,7 @@ async function getMemoList(req: Request, res: Response) {
  * メモ１件取得
  */
 async function getMemo(req: Request, res: Response) {
+  console.log("getMemo called");
   const id = req.params.id;
 
   try {
@@ -54,6 +56,7 @@ async function getMemo(req: Request, res: Response) {
  * メモ更新
  */
 async function updateMemo(req: Request, res: Response) {
+  console.log("updateMemo called");
   const id = req.params.id;
 
   try {
@@ -80,13 +83,14 @@ async function updateMemo(req: Request, res: Response) {
  * メモ削除
  */
 async function deleteMemo(req: Request, res: Response) {
+  console.log("deleteMemo called");
   const id = req.params.id;
 
   try {
     const memo = await Memo.findById(id);
 
     if (!memo) {
-      res.status(404).json({ message: "メモが見つかりません" });
+      return res.status(404).json({ message: "メモが見つかりません" });
     }
 
     await Memo.findByIdAndDelete(id);

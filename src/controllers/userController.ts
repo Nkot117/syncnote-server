@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import User from "../models/userModel.js";
 import { sendRegistrationMail } from "../services/mailService.js";
 import { tokenDecode } from "../services/tokenAuthService.js";
+import Memo from "../models/memoModel.js";
 
 /**
  * ユーザー登録処理
@@ -131,6 +132,7 @@ async function deleteUser(req: Request, res: Response) {
   const userId = req.user._id;
 
   try {
+    await Memo.deleteMany({ userId: userId });
     await User.findOneAndDelete({ _id: userId });
     return res.status(200).json({ message: "ユーザー情報を削除しました" });
   } catch (error) {
