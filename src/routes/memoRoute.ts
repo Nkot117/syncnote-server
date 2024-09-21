@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyToken } from "../services/tokenAuthService.js";
-import { createMemo, getMemo, getMemoList, updateMemo } from "../controllers/memoController.js";
+import { createMemo, deleteMemo, getMemo, getMemoList, updateMemo } from "../controllers/memoController.js";
 
 const router = Router();
 
@@ -23,5 +23,10 @@ router.get("/:id", verifyToken, getMemo);
  * メモ更新API
  */
 router.patch("/:id", verifyToken, updateMemo);
+
+/**
+ * メモ削除API
+ */
+router.delete("/:id", verifyToken, deleteMemo);
 
 export default router;

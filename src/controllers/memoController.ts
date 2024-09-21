@@ -79,6 +79,23 @@ async function updateMemo(req: Request, res: Response) {
 /**
  * メモ削除
  */
-async function deleteMemo(req: Request, res: Response) {}
+async function deleteMemo(req: Request, res: Response) {
+  const id = req.params.id;
+
+  try {
+    const memo = await Memo.findById(id);
+
+    if (!memo) {
+      res.status(404).json({ message: "メモが見つかりません" });
+    }
+
+    await Memo.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "メモを削除しました" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "メモの削除に失敗しました" });
+  }
+}
 
 export { createMemo, getMemoList, getMemo, updateMemo, deleteMemo };
