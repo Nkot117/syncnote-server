@@ -7,11 +7,11 @@ import Memo from "../models/memoModel.js";
 async function createMemo(req: Request, res: Response) {
   console.log("createMemo called");
 
-  const id = req.user._id;
+  const userId = req.user._id;
   const { title, content } = req.body;
 
   try {
-    const memo = await Memo.create({ userId: id, title, content });
+    const memo = await Memo.create({ userId, title, content });
     console.log(memo);
     res.status(200).json({ memo });
   } catch (error) {
@@ -24,10 +24,10 @@ async function createMemo(req: Request, res: Response) {
  * メモ一覧取得
  */
 async function getMemoList(req: Request, res: Response) {
-  const id = req.user._id;
+  const userId = req.user._id;
 
   try {
-    const memoList = await Memo.find({ userId: id });
+    const memoList = await Memo.find({ userId });
     res.status(200).json({ memoList });
   } catch (error) {
     console.log(error);
@@ -38,7 +38,17 @@ async function getMemoList(req: Request, res: Response) {
 /**
  * メモ１件取得
  */
-async function getMemo(req: Request, res: Response) {}
+async function getMemo(req: Request, res: Response) {
+  const id = req.params.id;
+
+  try {
+    const memo  = await Memo.findById(id);
+    res.status(200).json({ memo });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "メモの取得に失敗しました" });
+  }
+}
 
 /**
  * メモ更新
