@@ -42,7 +42,7 @@ async function getMemo(req: Request, res: Response) {
   const id = req.params.id;
 
   try {
-    const memo  = await Memo.findById(id);
+    const memo = await Memo.findById(id);
     res.status(200).json({ memo });
   } catch (error) {
     console.log(error);
@@ -53,7 +53,28 @@ async function getMemo(req: Request, res: Response) {
 /**
  * メモ更新
  */
-async function updateMemo(req: Request, res: Response) {}
+async function updateMemo(req: Request, res: Response) {
+  const id = req.params.id;
+
+  try {
+    const memo = await Memo.findById(id);
+
+    if (!memo) {
+      res.status(404).json({ message: "メモが見つかりません" });
+    }
+
+    const updatedMemo = await Memo.findByIdAndUpdate(
+      id,
+      { $set: req.body },
+      { new: true }
+    );
+
+    res.status(200).json({ updatedMemo });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "メモの更新に失敗しました" });
+  }
+}
 
 /**
  * メモ削除
