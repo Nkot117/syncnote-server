@@ -122,4 +122,23 @@ async function loginUser(req: Request, res: Response) {
   }
 }
 
-export { registerUser, verifyEmail, loginUser };
+/**
+ * ユーザー情報の削除処理
+ */
+async function deleteUser(req: Request, res: Response) {
+  console.log("deleteUser called");
+
+  const userId = req.user._id;
+
+  try {
+    await User.findOneAndDelete({ _id: userId });
+    return res.status(200).json({ message: "ユーザー情報を削除しました" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "ユーザー情報の削除に失敗しました" });
+  }
+}
+
+export { registerUser, verifyEmail, loginUser, deleteUser };
