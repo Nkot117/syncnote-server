@@ -13,10 +13,10 @@ async function createMemo(req: Request, res: Response) {
   try {
     const memo = await Memo.create({ userId, title, content });
     console.log(memo);
-    res.status(200).json({ memo });
+    return res.status(200).json({ memo });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "メモの新規作成に失敗しました" });
+    return res.status(500).json({ message: "メモの新規作成に失敗しました" });
   }
 }
 
@@ -29,10 +29,10 @@ async function getMemoList(req: Request, res: Response) {
 
   try {
     const memoList = await Memo.find({ userId });
-    res.status(200).json({ memoList });
+    return res.status(200).json({ memoList });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "メモ一覧の取得に失敗しました" });
+    return res.status(500).json({ message: "メモ一覧の取得に失敗しました" });
   }
 }
 
@@ -45,10 +45,10 @@ async function getMemo(req: Request, res: Response) {
 
   try {
     const memo = await Memo.findById(id);
-    res.status(200).json({ memo });
+    return res.status(200).json({ memo });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "メモの取得に失敗しました" });
+    return res.status(500).json({ message: "メモの取得に失敗しました" });
   }
 }
 
@@ -63,7 +63,7 @@ async function updateMemo(req: Request, res: Response) {
     const memo = await Memo.findById(id);
 
     if (!memo) {
-      res.status(404).json({ message: "メモが見つかりません" });
+      return res.status(404).json({ message: "メモが見つかりません" });
     }
 
     const updatedMemo = await Memo.findByIdAndUpdate(
@@ -72,10 +72,10 @@ async function updateMemo(req: Request, res: Response) {
       { new: true }
     );
 
-    res.status(200).json({ updatedMemo });
+    return res.status(200).json({ updatedMemo });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "メモの更新に失敗しました" });
+    return res.status(500).json({ message: "メモの更新に失敗しました" });
   }
 }
 
@@ -95,10 +95,10 @@ async function deleteMemo(req: Request, res: Response) {
 
     await Memo.findByIdAndDelete(id);
 
-    res.status(200).json({ message: "メモを削除しました" });
+    return res.status(200).json({ message: "メモを削除しました" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "メモの削除に失敗しました" });
+    return res.status(500).json({ message: "メモの削除に失敗しました" });
   }
 }
 
