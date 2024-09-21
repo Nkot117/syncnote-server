@@ -7,7 +7,7 @@ interface IMemo {
 
 const memoSchema = new Schema(
   {
-    id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     title: String,
     content: String,
   },
