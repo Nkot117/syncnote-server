@@ -35,7 +35,8 @@ async function registerUser(req: Request, res: Response) {
 
     sendRegistrationMail(name, email, token, "welcomeEmail");
 
-    return res.status(200).json({ user });
+    const {password: _, ...userWithoutPassword} = user.toObject();
+    return res.status(200).json({ userWithoutPassword });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "ユーザー登録に失敗しました" });
