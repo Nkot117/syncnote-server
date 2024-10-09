@@ -12,7 +12,6 @@ async function createMemo(req: Request, res: Response) {
 
   try {
     const memo = await Memo.create({ userId, title, content });
-    console.log(memo);
     return res.status(200).json({ memo });
   } catch (error) {
     console.error(error);

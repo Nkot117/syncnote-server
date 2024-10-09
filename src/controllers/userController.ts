@@ -57,7 +57,6 @@ async function verifyEmail(req: Request, res: Response) {
 
   try {
     const decodedToken = tokenDecode(token);
-    console.log(decodedToken);
     if (!decodedToken) {
       return res.status(400).json({ message: "無効なトークンです" });
     }
@@ -67,7 +66,6 @@ async function verifyEmail(req: Request, res: Response) {
       { _id: userId, email },
       { emailVerified: true }
     );
-    console.log(user);
     if (user.modifiedCount === 0) {
       return res.status(400).json({ message: "ユーザーが見つかりません" });
     }

@@ -33,7 +33,6 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
   try {
     const token = authorization.split(" ")[1];
     const decodedToken = tokenDecode(token);
-    console.log(decodedToken);
     if (!decodedToken) {
       return res.status(401).json({ message: "認証に失敗しました" });
     }
