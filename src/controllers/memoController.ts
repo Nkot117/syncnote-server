@@ -71,7 +71,7 @@ async function updateMemo(req: Request, res: Response) {
       { new: true }
     );
 
-    return res.status(200).json({ updatedMemo });
+    return res.status(200).json({ memo: updatedMemo });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "メモの更新に失敗しました" });
