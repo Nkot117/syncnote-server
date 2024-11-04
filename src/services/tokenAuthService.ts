@@ -13,17 +13,28 @@ declare global {
   }
 }
 
-function tokenDecode(token: string): JwtPayload | null {
-  try {
-    return jwt.verify(token, process.env.TOKEN_SECRET_KEY || "") as JwtPayload;
-  } catch (error) {
-    throw new Error("JWT decode failed");
-  }
+async function tokenDecode(
+  token: string
+): Promise<JwtPayload | jwt.TokenExpiredError | null> {
+  return new Promise((resolve) => {
+    jwt.verify(token, process.env.TOKEN_SECRET_KEY || "", (error, decoded) => {
+      console.log(error);
+      if (error) {
+        if (error instanceof jwt.TokenExpiredError) {
+          resolve(error);
+        } else {
+          resolve(null);
+        }
+      } else {
+        resolve(decoded as JwtPayload);
+      }
+    });
+  });
 }
 
 async function verifyToken(req: Request, res: Response, next: NextFunction) {
   console.log("verifyToken called");
-  
+
   const authorization = req.headers.authorization;
 
   if (!authorization) {
@@ -32,9 +43,18 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
 
   try {
     const token = authorization.split(" ")[1];
-    const decodedToken = tokenDecode(token);
+    const decodedToken = await tokenDecode(token);
+
+    // ExpiredErrorの場合は、トークン有効期限切れエラーを返す
+    // それ以外のエラーの場合は、認証エラーを返す
     if (!decodedToken) {
       return res.status(401).json({ message: "認証に失敗しました" });
+    }
+
+    if (decodedToken instanceof jwt.TokenExpiredError) {
+      return res
+        .status(401)
+        .json({ message: "トークンの有効期限が切れました" });
     }
 
     const { id } = decodedToken as JwtPayload;
