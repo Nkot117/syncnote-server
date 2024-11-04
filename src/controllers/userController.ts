@@ -10,8 +10,6 @@ import {
   tokenDecode,
 } from "../services/tokenAuthService.js";
 import Memo from "../models/memoModel.js";
-import { access } from "fs";
-import { create } from "domain";
 
 /**
  * ユーザー登録処理
@@ -62,7 +60,7 @@ async function verifyEmail(req: Request, res: Response) {
   }
 
   try {
-    const decodedToken = tokenDecode(token);
+    const decodedToken = await tokenDecode(token);
     if (!decodedToken) {
       return res.status(400).json({ message: "無効なトークンです" });
     }
@@ -147,4 +145,42 @@ async function deleteUser(req: Request, res: Response) {
   }
 }
 
-export { registerUser, verifyEmail, loginUser, deleteUser };
+async function refreshToken(req: Request, res: Response) {
+  console.log("refreshToken called");
+
+  const refreshToken = req.body.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(400).json({ message: "リフレッシュトークンが必要です" });
+  }
+
+  try {
+    const decodedToken = jwt.verify(
+      refreshToken,
+      process.env.TOKEN_SECRET_KEY || ""
+    );
+
+    if (!decodedToken) {
+      return res
+        .status(400)
+        .json({ message: "リフレッシュトークンが無効です" });
+    }
+
+    const { userId } = decodedToken as JwtPayload;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(400).json({ message: "ユーザーが見つかりません" });
+    }
+
+    const accessToken = createAccessToken(user);
+    return res.status(200).json({ accessToken });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "リフレッシュトークンの更新に失敗しました" });
+  }
+}
+
+export { registerUser, verifyEmail, loginUser, deleteUser, refreshToken };

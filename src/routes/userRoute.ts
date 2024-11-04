@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   deleteUser,
   loginUser,
+  refreshToken,
   registerUser,
   verifyEmail,
 } from "../controllers/userController.js";
@@ -26,6 +27,11 @@ router.get("/verify-email", verifyEmail);
  * ログインAPI
  */
 router.post("/login", loginUser);
+
+/**
+ * トークンリフレッシュAPI
+ */
+router.post("/refresh-token", refreshToken);
 
 /**
  * ユーザー削除API
