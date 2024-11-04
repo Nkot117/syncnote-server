@@ -4,8 +4,14 @@ import bcrypt from "bcrypt";
 
 import User from "../models/userModel.js";
 import { sendRegistrationMail } from "../services/mailService.js";
-import { tokenDecode } from "../services/tokenAuthService.js";
+import {
+  createAccessToken,
+  createRefreshToken,
+  tokenDecode,
+} from "../services/tokenAuthService.js";
 import Memo from "../models/memoModel.js";
+import { access } from "fs";
+import { create } from "domain";
 
 /**
  * ユーザー登録処理
@@ -35,7 +41,7 @@ async function registerUser(req: Request, res: Response) {
 
     sendRegistrationMail(name, email, token, "welcomeEmail");
 
-    const {password: _, ...userWithoutPassword} = user.toObject();
+    const { password: _, ...userWithoutPassword } = user.toObject();
     return res.status(200).json({ userWithoutPassword });
   } catch (error) {
     console.error(error);
@@ -106,13 +112,12 @@ async function loginUser(req: Request, res: Response) {
 
     if (descriptedPassword) {
       const { password: _, ...userWithoutPassword } = user.toObject();
-      const token = jwt.sign(
-        { id: user._id },
-        process.env.TOKEN_SECRET_KEY || "",
-        { expiresIn: "24h" }
-      );
+      const accessToken = createAccessToken(user);
+      const refreshToken = createRefreshToken(user);
 
-      return res.status(200).json({ userWithoutPassword, token });
+      return res
+        .status(200)
+        .json({ userWithoutPassword, accessToken, refreshToken });
     } else {
       return res.status(400).json({ message: "パスワードが違います" });
     }

@@ -73,4 +73,18 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export { verifyToken, tokenDecode };
+function createAccessToken(user: UserDocument) {
+  return jwt.sign(
+    { userId: user._id, email: user.email },
+    process.env.TOKEN_SECRET_KEY || "",
+    { expiresIn: "24h" }
+  );
+}
+
+function createRefreshToken(user: UserDocument) {
+  return jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET_KEY || "", {
+    expiresIn: "7d",
+  });
+}
+
+export { verifyToken, tokenDecode, createAccessToken, createRefreshToken };
