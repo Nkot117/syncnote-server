@@ -18,7 +18,6 @@ async function tokenDecode(
 ): Promise<JwtPayload | jwt.TokenExpiredError | null> {
   return new Promise((resolve) => {
     jwt.verify(token, process.env.TOKEN_SECRET_KEY || "", (error, decoded) => {
-      console.log(error);
       if (error) {
         if (error instanceof jwt.TokenExpiredError) {
           resolve(error);
@@ -68,7 +67,6 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
 
     next();
   } catch (error) {
-    console.log(error);
     return res.status(401).json({ message: "認証に失敗しました" });
   }
 }
