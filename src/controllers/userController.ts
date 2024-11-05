@@ -166,8 +166,8 @@ async function refreshToken(req: Request, res: Response) {
         .json({ message: "リフレッシュトークンが無効です" });
     }
 
-    const { userId } = decodedToken as JwtPayload;
-    const user = await User.findById(userId);
+    const { id } = decodedToken as JwtPayload;
+    const user = await User.findById(id);
 
     if (!user) {
       return res.status(400).json({ message: "ユーザーが見つかりません" });
