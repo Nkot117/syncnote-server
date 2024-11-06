@@ -53,7 +53,7 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
     if (decodedToken instanceof jwt.TokenExpiredError) {
       return res
         .status(401)
-        .json({ message: "トークンの有効期限が切れました" });
+        .json({ message: "トークンの有効期限が切れました", reason: "expired" });
     }
 
     const { id } = decodedToken as JwtPayload;
