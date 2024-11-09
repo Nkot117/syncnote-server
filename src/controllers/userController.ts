@@ -10,6 +10,8 @@ import {
   tokenDecode,
 } from "../services/tokenAuthService.js";
 import Memo from "../models/memoModel.js";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 
 /**
  * ユーザー登録処理
@@ -70,13 +72,17 @@ async function verifyEmail(req: Request, res: Response) {
       { _id: userId, email },
       { emailVerified: true }
     );
+    
     if (user.modifiedCount === 0) {
       return res.status(400).json({ message: "ユーザーが見つかりません" });
     }
 
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    
     return res
       .status(200)
-      .json({ message: "メールアドレス認証が完了しました" });
+      .sendFile(path.join(__dirname, "../public/success.html"));
   } catch (error) {
     console.error(error);
 
