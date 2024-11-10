@@ -1,0 +1,338 @@
+openapi: 3.0.3
+info:
+  title: "SyncNote Server API"
+  version: "1.0.0"
+  description: "SyncNote ServerのAPI仕様書です。"
+paths:
+  /api/user/register:
+    post:
+      summary: "ユーザー登録"
+      description: "ユーザー情報を基にユーザーを登録します。"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: "ユーザー名"
+                email:
+                  type: string
+                  format: email
+                  description: "メールアドレス"
+                password:
+                  type: string
+                  description: "パスワード"
+      responses:
+        "200":
+          description: "ユーザー登録成功"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "登録成功メッセージ"
+        "400":
+          description: "バリデーションエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "409":
+          description: "メールアドレスは既に登録済みエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "500":
+          description: "サーバーエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+  /api/user/login:
+    post:
+      summary: "ログイン"
+      description: "メールアドレスとパスワードを基にログインします。"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: "メールアドレス"
+                password:
+                  type: string
+                  description: "パスワード"
+      responses:
+        "200":
+          description: "ログイン成功"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: "ユーザー名"
+                  email:
+                    type: string
+                    format: email
+                    description: "メールアドレス"
+                  accessToken:
+                    type: string
+                    description: "アクセストークン"
+                  refreshToken:
+                    type: string
+                    description: "リフレッシュトークン"
+        "400":
+          description: "バリデーションエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "401":
+          description: "認証エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "403":
+          description: "アクセス権限エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "404":
+          description: "ユーザー未登録エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "500":
+          description: "サーバーエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+  /api/user/verify-email:
+    get:
+      summary: "メールアドレス認証"
+      description: "メールアドレス認証を行います。"
+      parameters:
+        - name: "token"
+          in: "query"
+          required: true
+          schema:
+            type: string
+          description: "認証トークン"
+      responses:
+        "200":
+          description: "メールアドレス認証成功"
+          content:
+            text/html:
+              schema:
+                type: string
+                description: "認証成功ページ"
+        "400":
+          description: "バリデーションエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "401":
+          description: "認証エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "404":
+          description: "ユーザー未登録エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "500":
+          description: "サーバーエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+  /api/user/refresh-token:
+    post:
+      summary: "トークンリフレッシュ"
+      description: "リフレッシュトークンを基にアクセストークンをリフレッシュします。"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  description: "リフレッシュトークン"
+      responses:
+        "200":
+          description: "トークンリフレッシュ成功"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: "アクセストークン"
+        "400":
+          description: "バリデーションエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "401":
+          description: "認証エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "404":
+          description: "ユーザー未登録エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "500":
+          description: "サーバーエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+  /api/user/delete:
+    delete:
+      summary: "ユーザー削除"
+      description: "ユーザーを削除します。"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+            example: "Bearer {accessToken}"
+          description: "アクセストークン"
+      responses:
+        "200":
+          description: "ユーザー削除成功"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "削除成功メッセージ"
+        "401":
+          description: "認証エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+                  reason:
+                    type: string
+                    description: "エラー理由"
+        "404":
+          description: "ユーザー未登録エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "500":
+          description: "サーバーエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+
