@@ -284,13 +284,7 @@ paths:
       summary: "ユーザー削除"
       description: "ユーザーを削除します。"
       parameters:
-        - in: "header"
-          name: "Authorization"
-          required: true
-          schema:
-            type: string
-            example: "Bearer {accessToken}"
-          description: "アクセストークン"
+        - $ref: "#/components/parameters/AuthorizationHeader"
       responses:
         "200":
           description: "ユーザー削除成功"
@@ -335,4 +329,308 @@ paths:
                   message:
                     type: string
                     description: "エラーメッセージ"
+  /api/memo/create:
+    post:
+      summary: "メモ作成"
+      description: "メモを作成します。"
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: "メモタイトル"
+                content:
+                  type: string
+                  description: "メモ内容"
+      responses:
+        "200":
+          description: "メモ作成成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemoItem"
+        "401":
+          description: "認証エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+                  reason:
+                    type: string
+                    description: "エラー理由"
+        "404":
+          description: "ユーザー未登録エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "500":
+          description: "サーバーエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+  /api/memo/list:
+    get:
+      summary: "メモ一覧取得"
+      description: "ユーザーのメモ一覧を取得します。"
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+      responses:
+        "200":
+          description: "メモ一覧取得成功"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  memoList:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MemoItem"
+        "401":
+          description: "認証エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+                  reason:
+                    type: string
+                    description: "エラー理由"
+        "404":
+          description: "ユーザー未登録エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "500":
+          description: "サーバーエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+  /api/memo/{id}:
+    get:
+      summary: "メモの詳細取得"
+      description: "メモの詳細を取得します。"
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: string
+          description: "メモID"
+      responses:
+        "200":
+          description: "メモ詳細取得成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemoItem"
+        "401":
+          description: "認証エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+                  reason:
+                    type: string
+                    description: "エラー理由"
+        "404":
+          description: "メモ・ユーザー未登録エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "500":
+          description: "サーバーエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+    patch:
+      summary: "メモ更新"
+      description: "メモを更新します。"
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: string
+          description: "メモID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: "メモタイトル"
+                content:
+                  type: string
+                  description: "メモ内容"
+      responses:
+        "200":
+          description: "メモ更新成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemoItem"
+        "401":
+          description: "認証エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+                  reason:
+                    type: string
+                    description: "エラー理由"
+        "404":
+          description: "メモ・ユーザー未登録エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "500":
+          description: "サーバーエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+    delete:
+      summary: "メモ削除"
+      description: "メモを削除します。"
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/MemoId"
+      responses:
+        "200":
+          description: "メモ削除成功"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "削除成功メッセージ"
+        "401":
+          description: "認証エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+                  reason:
+                    type: string
+                    description: "エラー理由"
+        "404":
+          description: "メモ・ユーザー未登録エラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
+        "500":
+          description: "サーバーエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "エラーメッセージ"
 
+components:
+  parameters:
+    AuthorizationHeader:
+      in: "header"
+      name: "Authorization"
+      required: true
+      schema:
+        type: string
+        example: "Bearer {accessToken}"
+      description: "アクセストークン"
+    MemoId:
+      name: "id"
+      in: "path"
+      required: true
+      schema:
+        type: string
+      description: "メモID"
+  schemas:
+    MemoItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "メモID"
+        title:
+          type: string
+          description: "メモタイトル"
+        content:
+          type: string
+          description: "メモ内容"
