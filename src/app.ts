@@ -44,19 +44,18 @@ const setupSwagger = () => {
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     res.status(err.status || 500).json({
       message: err.message,
-      errors: err.errors,
     });
   });
 
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(document));
-}
+};
 
 const getSwaggerYamlDocument = () => {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
   const yamlPath = path.join(__dirname, "./swagger/swagger.yaml");
   return YAML.load(yamlPath);
-}; 
+};
 
 // アプリケーションの設定
 const configureApp = () => {
