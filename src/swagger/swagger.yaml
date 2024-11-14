@@ -652,7 +652,10 @@ components:
     MemoItem:
       type: object
       properties:
-        id:
+        userId: 
+          type: string
+          description: "ユーザーID"
+        _id:
           type: string
           description: "メモID"
         title:
@@ -661,7 +664,12 @@ components:
         content:
           type: string
           description: "メモ内容"
-      required:
-        - id
-        - title
-        - content
+        createdAt:
+          type: string
+          format: date-time
+          description: "作成日時"
+        updatedAt:
+          type: string
+          format: date-time
+          description: "更新日時"
+          
