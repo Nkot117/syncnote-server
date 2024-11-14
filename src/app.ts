@@ -1,5 +1,6 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import swaggerUi from "swagger-ui-express";
+import * as OpenApiValidator from "express-openapi-validator";
 import cors from "cors";
 import env from "dotenv";
 env.config();
@@ -25,23 +26,42 @@ const configureCors = () => {
 // ミドルウェアの設定
 const configureMiddleware = () => {
   app.use(express.json());
+  setupSwagger();
   app.use("/api", apiRoute);
 };
 
-// Swaggerの設定
-const configureSwagger = () => {
+const setupSwagger = () => {
+  const document = getSwaggerYamlDocument();
+
+  app.use(
+    OpenApiValidator.middleware({
+      apiSpec: document,
+      validateRequests: true,
+      validateResponses: true,
+    })
+  );
+
+  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    res.status(err.status || 500).json({
+      message: err.message,
+      errors: err.errors,
+    });
+  });
+
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(document));
+}
+
+const getSwaggerYamlDocument = () => {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
   const yamlPath = path.join(__dirname, "./swagger/swagger.yaml");
-  const swaggerDocument = YAML.load(yamlPath);
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-};
+  return YAML.load(yamlPath);
+}; 
 
 // アプリケーションの設定
 const configureApp = () => {
   app.use(configureCors());
   configureMiddleware();
-  configureSwagger();
 };
 
 configureApp();
