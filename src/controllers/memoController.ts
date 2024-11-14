@@ -44,6 +44,11 @@ async function getMemo(req: Request, res: Response) {
 
   try {
     const memo = await Memo.findById(id);
+
+    if (!memo) {
+      return res.status(404).json({ message: "メモが見つかりません" });
+    }
+    
     return res.status(200).json({ memo });
   } catch (error) {
     console.log(error);
