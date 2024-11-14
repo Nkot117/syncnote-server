@@ -41,8 +41,7 @@ async function registerUser(req: Request, res: Response) {
 
     sendRegistrationMail(name, email, token, "welcomeEmail");
 
-    const { password: _, ...userWithoutPassword } = user.toObject();
-    return res.status(200).json({ userWithoutPassword });
+    return res.status(200).json({ message: "ユーザー登録が完了しました" });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "ユーザー登録に失敗しました" });
@@ -57,14 +56,10 @@ async function verifyEmail(req: Request, res: Response) {
 
   const token = req.query.token as string;
 
-  if (!token) {
-    return res.status(400).json({ message: "無効なトークンです" });
-  }
-
   try {
     const decodedToken = await tokenDecode(token);
     if (!decodedToken) {
-      return res.status(400).json({ message: "無効なトークンです" });
+      return res.status(401).json({ message: "無効なトークンです" });
     }
 
     const { userId, email } = decodedToken as JwtPayload;
@@ -74,7 +69,7 @@ async function verifyEmail(req: Request, res: Response) {
     );
     
     if (user.modifiedCount === 0) {
-      return res.status(400).json({ message: "ユーザーが見つかりません" });
+      return res.status(404).json({ message: "ユーザーが登録されていません" });
     }
 
     const __filename = fileURLToPath(import.meta.url);
@@ -103,12 +98,12 @@ async function loginUser(req: Request, res: Response) {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "ユーザーが見つかりません" });
+      return res.status(404).json({ message: "ユーザーが登録されていません" });
     }
 
     if (user.emailVerified === false) {
       return res
-        .status(400)
+        .status(403)
         .json({ message: "メールアドレスが認証されていません" });
     }
 
@@ -123,10 +118,9 @@ async function loginUser(req: Request, res: Response) {
         .status(200)
         .json({ userWithoutPassword, accessToken, refreshToken });
     } else {
-      return res.status(400).json({ message: "パスワードが違います" });
+      return res.status(401).json({ message: "パスワードが違います" });
     }
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ message: "ログインに失敗しました" });
   }
 }

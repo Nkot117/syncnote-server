@@ -308,6 +308,15 @@ paths:
                   message:
                     type: string
                     description: "削除成功メッセージ"
+        "400":
+          description: "バリデーションエラー"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
         "401":
           description: "認証エラー"
           content:

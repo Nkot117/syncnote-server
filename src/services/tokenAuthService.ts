@@ -37,7 +37,7 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
   const authorization = req.headers.authorization;
 
   if (!authorization) {
-    return res.status(401).json({ message: "認証に失敗しました" });
+    return res.status(400).json({ message: "認証に失敗しました" });
   }
 
   try {
@@ -47,7 +47,7 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
     // ExpiredErrorの場合は、トークン有効期限切れエラーを返す
     // それ以外のエラーの場合は、認証エラーを返す
     if (!decodedToken) {
-      return res.status(401).json({ message: "認証に失敗しました" });
+      return res.status(401).json({ message: "認証に失敗しました", reason: "invalid" });
     }
 
     if (decodedToken instanceof jwt.TokenExpiredError) {
@@ -60,14 +60,14 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
     const user = await User.findById(id);
 
     if (!user) {
-      return res.status(401).json({ message: "認証に失敗しました" });
+      return res.status(404).json({ message: "ユーザーが登録されていません" });
     }
 
     req.user = user;
 
     next();
   } catch (error) {
-    return res.status(401).json({ message: "認証に失敗しました" });
+    return res.status(500).json({ message: "認証に失敗しました" });
   }
 }
 
