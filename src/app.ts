@@ -32,6 +32,7 @@ const configureMiddleware = () => {
 
 const setupSwagger = () => {
   const document = getSwaggerYamlDocument();
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(document));
 
   app.use(
     OpenApiValidator.middleware({
@@ -46,8 +47,6 @@ const setupSwagger = () => {
       message: err.message,
     });
   });
-
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(document));
 };
 
 const getSwaggerYamlDocument = () => {
