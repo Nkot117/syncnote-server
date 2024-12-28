@@ -14,7 +14,7 @@ const sendRegistrationMail = async (
 ) => {
   try {
     const transporter = createTransporter();
-
+    const from = setFromEmailAddress();
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
     const templatePath = path.join(
@@ -30,8 +30,8 @@ const sendRegistrationMail = async (
     });
 
     const options = {
-      from: process.env.DEV_MAIL_USER,
-      to: email,
+      from: from,
+      to: "syncnotedev@gmail.com",
       subject: "Registration",
       html,
     };
@@ -41,5 +41,14 @@ const sendRegistrationMail = async (
     console.error(error);
   }
 };
+
+const setFromEmailAddress = () => {
+  if(process.env.NODE_ENV === "production") {
+    return process.env.PROD_MAIL_ADDRESS
+  } else {
+    return process.env.DEV_MAIL_ADDRESS
+  }
+    
+}
 
 export { sendRegistrationMail };
