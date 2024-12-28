@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc && cp -r src/templates dist && cp -r src/public dist && cp -r src/swagger dist",
     "build-w": "tsc --watch",
-    "dev": "nodemon dist/server.js"
+    "dev": "NODE_ENV=development nodemon dist/server.js",
+    "start": "NODE_ENV=production node dist/server.js"
   },
   "keywords": [],
   "author": "",
