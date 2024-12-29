@@ -31,7 +31,7 @@ const sendRegistrationMail = async (
 
     const options = {
       from: from,
-      to: "syncnotedev@gmail.com",
+      to: email,
       subject: "Registration",
       html,
     };
